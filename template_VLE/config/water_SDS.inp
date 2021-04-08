@@ -6,12 +6,13 @@ tolerance 4.0
 
 structure water.pdb
   number 1
-  fixed 0. 0. 200. 0. 0. 0.
+  fixed 40. 40. 200. 0. 0. 0.
+  centerofmass
 end structure
 
 
 structure SDS_cg.pdb
-  number 42
+  number NRSURFACTANT
   atoms 1
     inside box 0.0 0.0 265.0 80.0 80.0 270.0
   end atoms
@@ -21,7 +22,7 @@ structure SDS_cg.pdb
 end structure
 
 structure SDS_cg.pdb
-  number 42
+  number NRSURFACTANT
   atoms 1
     inside box 0.0 0.0 130.0 80.0 80.0 135.0
   end atoms

@@ -1,1 +1,0 @@
-gmx editconf -f ../H2O_npt/confout.gro -o water.pdb
