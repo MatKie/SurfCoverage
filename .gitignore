@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Gromacs files
+*.log
+*.trr
+*.xtc
+confout*.gro
+*.gro
+*.edr
+*.out
+*.cpt
+*.tpr
+*.ndx
+*.raw
+*.dat
+*.pdf
+*.png
+*.txt
+mdout.mdp
+*.npz
+*.pkl
+!dummy.mdp
+!commands.txt
+
+topo/topol.top
+table*.xvg
+\#*
+*.sh.e*
+!*.sh.example
+*.sh.o*
+*.xvg

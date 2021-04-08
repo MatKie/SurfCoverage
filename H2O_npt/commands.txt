@@ -1,0 +1,2 @@
+gmx grompp -f npt.mdp -c ../H2O_em/confout.gro -p ../topo/topol.top -n ../H2O_em/index.ndx
+gmx mdrun -v -s topol.tpr

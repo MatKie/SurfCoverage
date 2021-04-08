@@ -1,0 +1,9 @@
+gmx solvate -cs cgw2.gro -box 8 8 12 -p ../topo/topol.top
+gmx grompp -f dummy.mdp -c out.gro -p ../topo/topol.top
+
+gmx make_ndx -f topol.tpr << EOF
+t W2
+EOF
+
+gmx grompp -f em.mdp -c out.gro -p ../topo/topol.top -n index.ndx
+gmx mdrun -v -s topol.tpr

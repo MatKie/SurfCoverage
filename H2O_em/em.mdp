@@ -1,0 +1,26 @@
+; em.mdp - used as input into grompp to generate ions.tpr
+; Parameters describing what to do, when to stop and what to save
+integrator  = steep         ; Algorithm (steep = steepest descent minimization)
+emtol       = 50        ; Stop minimization when the maximum force < 10.0 kJ/mol/nm(default)
+emstep      = 0.001          ; Minimization step size
+nsteps      = 15000         ; Maximum number of (minimization) steps to perform
+nstxout     = 100
+
+; Parameters describing how to find the neighbors of each atom and how to calculate the interactions
+nstlist         = 1         ; Frequency to update the neighbor list and long range forces
+cutoff-scheme	= group     ; old neighbor searching because of non LJ interactions 
+ns_type         = grid      ; Method to determine neighbor list (simple, grid)
+pbc             = xyz       ; Periodic Boundary Conditions in all 3 dimensions
+rlist           = 2.0       ; cutoff for neighbor searching
+
+;Electrostatics
+coulombtype     = cut-off       ; Treatment of long range elctrostatic interactions
+rcoulomb        = 2.0         ; cutoff for coulomb interactions
+epsilon-r       = 78.74
+;VDW
+vdwtype         = user     ; Needs shifting via modifier
+vdw-modifier    = None     ; shift potential
+rvdw            = 2.0         ; vdw cutoff
+
+energygrps = W2
+energygrp_table = W2 W2
