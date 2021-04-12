@@ -3,11 +3,11 @@
 integrator  = md         ; Algorithm (steep = steepest descent minimization)
 dt          = 0.01
 nstcomm     = 100
-nsteps      = 500000         ; Maximum number of (minimization) steps to perform
-nstxout     = 5000
-nstvout     = 5000
+nsteps      = 1500000         ; Maximum number of (minimization) steps to perform
+nstxout     = 2000
+nstvout     = 2000
 nstfout     = 0
-nstlog      = 5000
+nstlog      = 2000
 ; Parameters describing how to find the neighbors of each atom and how to calculate the interactions
 nstlist         = 5         ; Frequency to update the neighbor list and long range forces
 cutoff-scheme	= group     ; old neighbor searching because of non LJ interactions 
