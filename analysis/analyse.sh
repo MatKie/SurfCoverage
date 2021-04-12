@@ -1,12 +1,27 @@
 #!/bin/bash
 
 begin=5000
-
 cd ..
+
+for dir in $(ls -d VLE_*) 
+do
+    cd $dir/prod_nvt
+    gmx density -f traj.trr -b $begin -dens number -ng 6 -sl 400 -n ../config/index.ndx << EOF
+W2
+NA+
+SO4V9
+CM
+CT
+CM_CT
+EOF
+
+cd ../..
+done 
+
 for dir in $(ls -d VLE_*) 
 do
     cd $dir/prod_nvt 
-    gmx energy -f ener.edr -b $begin << EOF
+    gmx energy -f ener.edr -b $begin > energies.out << EOF
 1
 2
 3
@@ -23,6 +38,7 @@ do
 29
 30
 32
+34
 36
 38
 40

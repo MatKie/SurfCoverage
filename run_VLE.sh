@@ -39,6 +39,7 @@ t SO4V9
 t CM
 t CT
 t NA+
+t CM | t CT
 q
 EOF
 
