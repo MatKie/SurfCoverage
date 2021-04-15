@@ -1,5 +1,5 @@
 #PBS -lselect=1:ncpus=32:mem=2gb
-#PBS -lwalltime=03:00:00
+#PBS -lwalltime=06:00:00
 
 #module load intel-suite 
 #module load mpi 
@@ -20,7 +20,7 @@ cp $GMXLIB/* $RUNPATH
 #OMP_NUM_THREADS=1
 #MPI_NUM_THREADS=32
 
-gmx mdrun  -maxh 3 -ntmpi 32 -s topol.tpr   
+gmx mdrun  -maxh 6 -ntmpi 32 -s topol.tpr   
 
 rm *.sh.*
 rm table*.xvg

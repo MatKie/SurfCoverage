@@ -43,8 +43,14 @@ t CM | t CT
 q
 EOF
 
+cd ../em
+gmx grompp -f em.mdp -c ../config/water_SDS_neutral.gro -p ../topo/topol.top -n ../config/index.ndx
+gmx mdrun -v -s topol.tpr
+
 cd ../eq_nvt
 
-gmx grompp -f nvt.mdp -c ../config/water_SDS_neutral.gro -p ../topo/topol.top -n ../config/index.ndx
+gmx grompp -f nvt.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../config/index.ndx
 mv GROMACS.sh SC_VLE_${surfactants}.sh
- 
+
+gmx mdrun -v -nsteps 25000 -s topol.tpr
+

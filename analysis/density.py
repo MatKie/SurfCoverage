@@ -3,7 +3,7 @@ import os, glob
 import numpy as np
 
 # +
-file = os.path.join('..', 'VLE_50', 'prod_nvt', 'density.xvg')
+file = os.path.join('..', 'VLE_160', 'prod_nvt', 'density.xvg')
 
 density = np.loadtxt(file, comments=['@', '#'])
 
