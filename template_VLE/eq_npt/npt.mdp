@@ -1,9 +1,9 @@
 ; em.mdp - used as input into grompp to generate ions.tpr
 ; Parameters describing what to do, when to stop and what to save
 integrator  = md         ; Algorithm (steep = steepest descent minimization)
-dt          = 0.005
+dt          = 0.004
 nstcomm     = 100
-nsteps      = 500000         ; Maximum number of (minimization) steps to perform
+nsteps      = 1200000         ; Maximum number of (minimization) steps to perform
 nstxout     = 5000
 nstvout     = 5000
 nstfout     = 0
@@ -32,4 +32,9 @@ tc-grps  = system;
 tau-t    = 0.5;
 ref-t    = 298.15 ;
 
+pcoupl          = berendsen ;
+pcoupltype      = semiisotropic ;
+tau-p           = 1.4;
+compressibility = 0 0.000045 ;
+ref-p           = 1.0 1.0 ;
 

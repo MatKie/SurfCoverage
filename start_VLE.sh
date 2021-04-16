@@ -13,8 +13,6 @@ then
 fi
 
 cp -r template_VLE $dir
-mkdir $dir/topo
-cp  topo/topol.top $dir/topo
 cd $dir
 echo '*' > .gitignore
 
@@ -25,10 +23,10 @@ cd config
 sed -i s/NRSURFACTANT/$surfactants/g water_SDS.inp
 /home/mk8118/packmol/packmol < water_SDS.inp
 
-gmx editconf -f water_SDS.pdb -box 8 8 40 -o water_SDS.gro
+gmx editconf -f water_SDS.pdb -box 8 8 36 -o water_SDS.gro
 gmx grompp -f dummy.mdp -c water_SDS.gro -p ../topo/topol.top 
 gmx genion -s topol.tpr -p ../topo/topol.top -o water_SDS_neutral.gro -neutral -pname $c_ion << EOF
-2
+SOL
 EOF
 
 gmx grompp -f dummy.mdp -c water_SDS_neutral.gro -p ../topo/topol.top 
@@ -47,10 +45,10 @@ cd ../em
 gmx grompp -f em.mdp -c ../config/water_SDS_neutral.gro -p ../topo/topol.top -n ../config/index.ndx
 gmx mdrun -v -s topol.tpr
 
-cd ../eq_nvt
+cd ../eq_npt
 
-gmx grompp -f nvt.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../config/index.ndx
+gmx grompp -f npt.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../config/index.ndx
 mv GROMACS.sh SC_VLE_${surfactants}.sh
 
-gmx mdrun -v -nsteps 25000 -s topol.tpr
+gmx mdrun -v -nsteps 10000 -s topol.tpr
 

@@ -4,30 +4,35 @@
 
 tolerance 4.0
 
-structure water.pdb
+structure alkane.pdb
   number 1
-  fixed 40. 40. 200. 0. 0. 0.
+  fixed 40. 40. 100. 0. 0. 0.
   centerofmass
 end structure
 
+structure water.pdb
+  number 1
+  fixed 40. 40. 280. 0. 0. 0.
+  centerofmass
+end structure
 
 structure SDS_cg.pdb
   number NRSURFACTANT
-  atoms 1
-    inside box 0.0 0.0 265.0 80.0 80.0 275.0
-  end atoms
   atoms 5
-    inside box 0.0 0.0 280.0 80. 80. 290.
+    inside box 0.0 0.0 205.0 80.0 80.0 215.0
+  end atoms
+  atoms 1
+    inside box 0.0 0.0 225.0 80. 80. 235.
   end atoms
 end structure
 
 structure SDS_cg.pdb
   number NRSURFACTANT
   atoms 1
-    inside box 0.0 0.0 125.0 80.0 80.0 135.0
+    inside box 0.0 0.0 325.0 80.0 80.0 335.0
   end atoms
   atoms 5
-    inside box 0.0 0.0 110.0 80. 80. 120.
+    inside box 0.0 0.0 345.0 80. 80. 355.
   end atoms
 end structure
 

@@ -1,5 +1,6 @@
-gmx editconf -f ../../H2O_npt/confout.gro -o water.pdb
-gmx editconf -f water_SDS.pdb -box 8 8 40 -o water_SDS.gro
+gmx editconf -f ../../H2O/npt/confout.gro -o water.pdb
+gmx editconf -f ../../Alkane/npt/confout.gro -o alkane.pdb
+gmx editconf -f water_SDS.pdb -box 8 8 36 -o water_SDS.gro
 gmx grompp -f dummy.mdp -c water_SDS.gro -p ../topo/topol.top 
 gmx genion -s topol.tpr -p ../topo/topol.top -o water_SDS_neutral.gro -neutral -pname 'NA' << EOF
 SOL
