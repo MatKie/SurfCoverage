@@ -1,0 +1,2 @@
+gmx grompp -f npt.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../em/index.ndx
+gmx mdrun -v -s topol.tpr
