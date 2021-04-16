@@ -1,0 +1,30 @@
+#include "saftv1.ff/forcefield_defaults.itp"
+#include "saftv1.ff/ffnonbonded_wca_v2.itp"
+#include "saftv1.ff/cgw_bio.itp"
+#include "saftv1.ff/ions.itp"
+
+[ moleculetype ] ; Name nrexcl
+Dodecane 3
+[ atoms ] 
+; nr type   resnr resid atom cgnr charge  mass 
+  1  CT     1     DOD   C1   1    0.000   43.087  
+  2  CM     1     DOD   C2   2    0.000   42.079  
+  3  CM     1     DOD   C3   3    0.000   42.079  
+  4  CT     1     DOD   C4   4    0.000   43.087
+
+[ bonds ] 
+; ai aj fu c0, c1, ... 
+1       2         1        0.43426   5542.11
+2       3         1        0.41840   5542.11
+3       4         1        0.43426   5542.11
+
+[ angles ] ; ai aj ak fu c0, c1, ... 
+3       2         1         1       159      19.27
+4       3         2         1       159      19.27
+
+
+[system]
+Pure alkane slab 
+
+[molecules]
+Dodecane 3400

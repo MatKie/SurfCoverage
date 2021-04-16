@@ -1,0 +1,15 @@
+#
+# Import a micelle and solvate in water and ions
+#
+
+
+tolerance 4.0
+
+structure dodecane.pdb
+  number 3400
+  inside box 0.0 0.0 0.0 80. 80.0 200.0
+end structure
+
+
+output alkane.pdb
+

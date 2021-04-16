@@ -26,6 +26,8 @@ mdout.mdp
 !dummy.mdp
 !commands.txt
 
+Alkane/em/alkane.pdb
+
 topo/topol.top
 table*.xvg
 \#*

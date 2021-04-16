@@ -1,0 +1,20 @@
+~/packmol/packmol < alkane.inp.example
+gmx editconf -f alkane.pdb -o alkane.gro -box 8 8 20
+
+gmx grompp -f dummy.mdp -c alkane.gro -p ../topo/topol.top
+
+gmx make_ndx -f topol.tpr << EOF
+t CM
+t CT 
+t CM | t CT
+EOF
+
+gmx grompp -f em.mdp -c alkane.gro -p ../topo/topol.top -n index.ndx
+gmx mdrun -v -s topol.tpr
+
+Calculation of number of molecules:
+mol/nm^3 = dens * 1/MW * 6.022 * 10**-4
+for water ~ 33.45
+for nonane ~ 3.378 (rho 718 kg/m3, MW 0.128 kg/mol)
+for dodecane ~ 2.656 (rho 750 kg/m3, MW 0.170 kg/mol)
+for 8*8*20 = 1280nm^3 --> 3400 dodecane
