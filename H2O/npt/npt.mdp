@@ -3,7 +3,7 @@
 integrator  = md         ; Algorithm (steep = steepest descent minimization)
 dt          = 0.01
 nstcomm     = 100
-nsteps      = 500000         ; Maximum number of (minimization) steps to perform
+nsteps      = 1000000         ; Maximum number of (minimization) steps to perform
 nstxout     = 5000
 nstvout     = 5000
 nstfout     = 0

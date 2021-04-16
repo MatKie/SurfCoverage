@@ -1,0 +1,13 @@
+#include "saftv1.ff/forcefield_defaults.itp"
+#include "saftv1.ff/ffnonbonded_wca_v2.itp"
+#include "saftv1.ff/cgw_bio.itp"
+#include "saftv1.ff/ions.itp"
+
+
+[system]
+Water slab in water
+
+[molecules]
+
+
+SOL              8976
