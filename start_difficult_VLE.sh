@@ -21,10 +21,11 @@ echo ${name}' '${tot_surfactants} >> topo/topol.top
 
 cd config 
 sed -i s/NRSURFACTANT/$surfactants/g water_SDS.inp
-/home/mk8118/packmol/packmol < water_SDS.inp >> packmol.out
+sed -i s/NRSURFACTANT/$surfactants/g water_SDS_difficult.inp
+/home/mk8118/packmol/packmol < water_SDS_difficult.inp >> packmol.out
 
 
-gmx editconf -f water_SDS.pdb -box 8 8 36 -o water_SDS.gro
+gmx editconf -f water_SDS.pdb -box 8 8 40 -o water_SDS.gro
 gmx grompp -f dummy.mdp -c water_SDS.gro -p ../topo/topol.top 
 gmx genion -s topol.tpr -p ../topo/topol.top -o water_SDS_neutral.gro -neutral -pname $c_ion << EOF
 SOL
@@ -43,12 +44,12 @@ q
 EOF
 
 cd ../em
-gmx grompp -f em.mdp -c ../config/water_SDS_neutral.gro -p ../topo/topol.top -n ../config/index.ndx
-gmx mdrun -v -s topol.tpr
+gmx grompp -f em_difficult.mdp -c ../config/water_SDS_neutral.gro -p ../topo/topol.top -n ../config/index.ndx
+/usr/local/gromacs2019/gromacs2019_dp/bin/mdrun_d -v -s topol.tpr
 
 cd ../eq_npt
 
-gmx grompp -f npt.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../config/index.ndx
+gmx grompp -f npt_difficult.mdp -c ../em/confout.gro -p ../topo/topol.top -n ../config/index.ndx
 mv GROMACS.sh SC_VLE_${surfactants}.sh
 
 gmx mdrun -v -nsteps 10000 -s topol.tpr

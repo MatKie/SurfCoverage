@@ -25,9 +25,12 @@ mdout.mdp
 *.pkl
 !dummy.mdp
 !commands.txt
-
+eqnpt*
+lle*
+vle*
+started.list
 Alkane/em/alkane.pdb
-
+start_VLEs.sh
 topo/topol.top
 table*.xvg
 \#*

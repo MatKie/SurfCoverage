@@ -38,3 +38,5 @@ tau-p           = 1.4;
 compressibility = 0 0.000045 ;
 ref-p           = 1.0 1.0 ;
 
+gen-vel = yes
+gen-temp = 298.15

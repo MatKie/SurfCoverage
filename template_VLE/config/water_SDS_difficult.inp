@@ -19,20 +19,20 @@ end structure
 structure SDS_cg.pdb
   number NRSURFACTANT
   atoms 5
-    inside box 0.0 0.0 205.0 80.0 80.0 215.0
+    inside box 0.0 0.0 210.0 80.0 80.0 225.0
   end atoms
   atoms 1
-    inside box 0.0 0.0 225.0 80. 80. 235.
+    inside box 0.0 0.0 235.0 80. 80. 250.
   end atoms
 end structure
 
 structure SDS_cg.pdb
   number NRSURFACTANT
   atoms 1
-    inside box 0.0 0.0 325.0 80.0 80.0 335.0
+    inside box 0.0 0.0 350.0 80.0 80.0 365.0
   end atoms
   atoms 5
-    inside box 0.0 0.0 345.0 80. 80. 355.
+    inside box 0.0 0.0 375.0 80. 80. 390.
   end atoms
 end structure
 
