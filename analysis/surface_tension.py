@@ -1,12 +1,19 @@
 from mkutils import PlotGromacs, save_to_file, create_fig
 import os, glob
 
+# +
 Area = 8.*8. # nm
+
+def get_beads(coverage):
+    return {'W2': 8976.-coverage, 'SO4V9': coverage, 'NA+': coverage, 'CM': 3.*coverage, 'CT': coverage }
+
+
+# -
 
 files = glob.glob('../VLE_*')
 files = [os.path.join(file, 'prod_nvt', 'energies.out') for file in files]
 files = [file for file in files if os.path.isfile(file)]
-print(files)
+print([file.split(os.sep)[1].split('_')[-1] for file in files])
 
 
 # + active=""
@@ -22,14 +29,29 @@ print(files)
 # prop = 'Pres-ZZ'
 # -
 
-def get_data(prop):
+def get_data(prop, interaction_correction=True, in_kelvin=False):
     coverage, prop_averages, prop_errors = [], [], []
 
     for file in files:
         data = PlotGromacs.get_gmx_stats(file)
-        prop_averages.append(data.get(prop).get('Average'))
-        prop_errors.append(data.get(prop).get('Error'))
         coverage.append(float(file.split(os.sep)[1].split('_')[-1])/Area)
+        if interaction_correction:
+            if prop == 'Coul. recip.':
+                type_1, type_2 = 'NA+', 'SO4V9'
+            else:
+                interaction_string = prop.split(':')[-1]
+                type_1, type_2 = interaction_string.split('-')
+            beads = get_beads(coverage[-1])
+            beads_1 = beads.get(type_1)
+            beads_2 = beads.get(type_2)
+            correction = 1./(beads_1*beads_2)
+            if in_kelvin:
+                correction /= 6.022*1380
+        else:
+            correction = 1.
+        prop_averages.append(correction*data.get(prop).get('Average'))
+        prop_errors.append(correction*data.get(prop).get('Error'))
+        
     return coverage, prop_averages, prop_errors
 
 
@@ -37,7 +59,7 @@ def get_data(prop):
 # +
 fig, ax = create_fig(1,1)
 ax = ax[0]
-coverage, surftens, surftens_err = get_data('#Surf*SurfTen')
+coverage, surftens, surftens_err = get_data('#Surf*SurfTen', interaction_correction=False)
 ax.errorbar(coverage, [prop_average/20. for prop_average in surftens], 
             [prop_error/20. for prop_error in surftens_err], ls='', marker='o')
 
@@ -59,7 +81,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
             [prop_error for prop_error in prop_errors], ls='', marker='o', color='C1', label=prop)
 
 prop = "Coul. recip."
-coverage, prop_averages, prop_errors = get_data(prop)
+coverage, prop_averages, prop_errors = get_data(prop, interaction_correction=True)
 ax.errorbar(coverage, [prop_average for prop_average in prop_averages], 
             [prop_error for prop_error in prop_errors], ls='', marker='o', color='C3', label=prop)
 
