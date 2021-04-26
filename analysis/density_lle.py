@@ -5,16 +5,26 @@ from scipy.signal import find_peaks
 from scipy.optimize import curve_fit, newton
 
 # +
-file = os.path.join('..', 'VLE_300', 'prod_nvt', 'density.xvg')
-
+path = os.path.join('..', 'VLE_90', 'prod_nvt')
+file = os.path.join(path, 'density.xvg')
 density = np.loadtxt(file, comments=['@', '#'])
 
-labels = {1: 'Water', 2: 'NA+', 3: 'SO4', 4: 'CM', 5: 'CT', 6: 'CM_CT' }
+labels = {1: 'Water', 2: 'NA+', 3: 'SO4', 4: 'Tailgroups', 5: 'Dodecane', 6: 'CM(Dodec.)', 7: 'CT(Dodec.)' }
 # invert this dict.
 indices = {v: k for k, v in labels.items()}
 
-A = 8*8
-box_size = 40.
+gro_path = os.path.join(path, 'confout.gro')
+
+def get_boxsize(gro_path):
+    with open(gro_path, 'r') as f:
+        for line in reversed(f.readlines()):
+            return (float(x) for x in line.split())
+        
+        
+x, y, z = get_boxsize(gro_path)
+print(z)
+A = x*y
+box_size = z
 def get_surfCov(file, A):
     return float(file.split(os.sep)[1].split('_')[-1])/A
 
@@ -24,12 +34,11 @@ fig, ax = create_fig(1,1)
 ax = ax[0]
 ax2 = ax.twinx()
 
-for i in [1,2,3,6]:
+for i in [1,2,3,4, 5]:
     ax.plot(density[:, 0], density[:, i], lw=2, label=labels.get(i), color='C{:d}'.format(i-1))
 
     
-ax.set_xlim(10, 30)
-ax.set_ylim(-0.5, max(density[:, -1])*1.1)   
+  
 ax.set_xlim()
 ax.set_xlabel('z / nm')
 ax.set_ylabel('$\\rho_N\ /\ 1\,/\,nm^3$')
@@ -41,8 +50,7 @@ for i in [4,5,6]:
     ax.plot(density[:, 0], density[:, i], lw=2, label=labels.get(i), color='C{:d}'.format(i-1))
 
     
-ax.set_xlim(10, 30)
-ax.set_ylim(-0.5, max(density[:, -1])*1.1)   
+#ax.set_ylim(-0.5, max(density[:, -1])*1.1)   
 ax.set_xlim()
 ax.set_xlabel('z / nm')
 ax.set_ylabel('$\\rho_N\ /\ 1\,/\,nm^3$')
