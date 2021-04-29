@@ -19,7 +19,10 @@ confout*.gro
 *.dat
 *.pdf
 *.png
+*.gif
 *.txt
+*.list
+list.all
 mdout.mdp
 *.npz
 *.pkl
