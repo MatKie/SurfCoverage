@@ -6,6 +6,8 @@ while read line ;
 do
     dir=$line
     cd $dir/prod_nvt
+    gmx trjconv -f traj.trr -o traj.xtc -skip 3
+
     gmx make_ndx -f topol.tpr -o index_analysis.ndx << EOF
 del 11
 del 10

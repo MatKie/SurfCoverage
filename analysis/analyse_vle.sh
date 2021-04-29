@@ -6,7 +6,6 @@ while read line ;
 do
     dir=$line
     cd $dir/prod_vle
-    rm \#*
     gmx make_ndx -f topol.tpr -o index_analysis.ndx << EOF
 del 9
 del 8
@@ -29,6 +28,9 @@ NA+
 SO4V9
 CM_CT_&_SDS
 EOF
+
+    rm traj.xtc
+    gmx trjconv -f traj.trr -o traj.xtc -skip 3
 
     gmx energy -f ener.edr -b $begin > energies.out << EOF
 1

@@ -2,7 +2,7 @@ from mkutils import PlotGromacs, save_to_file, create_fig
 import os, glob
 
 # +
-Area = 8.*8. # nm
+Area = 8*8
 
 def get_beads(coverage):
     return {'W2': 8976.-coverage, 'SO4V9': coverage, 'NA+': coverage, 'CM': 3.*coverage, 'CT': coverage }
@@ -11,7 +11,7 @@ def get_beads(coverage):
 # -
 
 files = glob.glob('../VLE_*')
-files = [os.path.join(file, 'prod_nvt', 'energies.out') for file in files]
+files = [os.path.join(file, 'prod_vle', 'energies.out') for file in files]
 files = [file for file in files if os.path.isfile(file)]
 print([file.split(os.sep)[1].split('_')[-1] for file in files])
 
@@ -61,10 +61,11 @@ fig, ax = create_fig(1,1)
 ax = ax[0]
 coverage, surftens, surftens_err = get_data('#Surf*SurfTen', interaction_correction=False)
 ax.errorbar(coverage, [prop_average/20. for prop_average in surftens], 
-            [prop_error/20. for prop_error in surftens_err], ls='', marker='o')
+            [prop_error/20. for prop_error in surftens_err], ls='', marker='o', color='k')
 
-ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
+ax.set_xlabel('$\Gamma\,/\,nm^-2$')
 ax.set_ylabel('Surface Tension / Nm')
+save_to_file(os.path.join('VLE', 'Surface_tension'))
 
 # +
 fig, ax = create_fig(1,1, )
@@ -88,6 +89,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
 ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
 ax.set_ylabel('Interactions strength / kJ/mol')
 ax.legend()
+save_to_file(os.path.join('VLE', 'Coulomb'))
 
 # +
 fig, ax = create_fig(1,1, )
@@ -118,6 +120,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
 ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
 ax.set_ylabel('Interactions strength / kJ/mol')
 ax.legend()
+save_to_file(os.path.join('VLE', 'Water_interactions'))
 
 # +
 fig, ax = create_fig(1,1, )
@@ -155,6 +158,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
 ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
 ax.set_ylabel('Interactions strength / kJ/mol')
 ax.legend()
+save_to_file(os.path.join('VLE', 'SO4'))
 
 # +
 fig, ax = create_fig(1,1, )
@@ -188,6 +192,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
 ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
 ax.set_ylabel('Interactions strength / kJ/mol')
 ax.legend()
+save_to_file(os.path.join('LLE', 'CM'))
 
 # +
 fig, ax = create_fig(1,1, )
@@ -223,6 +228,7 @@ ax.errorbar(coverage, [prop_average for prop_average in prop_averages],
 ax.set_xlabel('Headgroup per Area / 1/nm$^2$')
 ax.set_ylabel('Interactions strength / kJ/mol')
 ax.legend()
+save_to_file(os.path.join('VLE', 'CT'))
 # -
 
 
