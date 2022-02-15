@@ -1,8 +1,10 @@
 from mkutils import PlotGromacs, save_to_file, create_fig
 import os, glob
+import numpy as np
+from Frumkin import FrumkinIsotherm
 
 # +
-A = 8*8
+Area = 8*8
 
 def get_beads(coverage):
     return {'W2': 8976.-coverage, 'SO4V9': coverage, 'NA+': coverage, 'CM': 3.*coverage, 'CT': coverage }
@@ -10,14 +12,16 @@ def get_beads(coverage):
 
 # -
 
+# Get energy files from all LLE simulations
 files = glob.glob('../VLE_*')
+files.sort(key=lambda x: int(x.split(os.sep)[1].split('_')[-1]))
+files = files[:-3]
 files = [os.path.join(file, 'prod_nvt', 'energies.out') for file in files]
 files = [file for file in files if os.path.isfile(file)]
 print([file.split(os.sep)[1].split('_')[-1] for file in files])
 
 
 # + active=""
-#
 # dict_keys(['Bond', 'Angle', 'LJ (SR)', 'Coulomb (SR)', 'Coul. recip.', 'Potential', 'Kinetic En.', 'Total Energy', 
 #            'Conserved En.', 'Temperature', 'Pressure', 'Pres-XX', 'Pres-YY', 'Pres-ZZ', '#Surf*SurfTen', 'LJ-SR:W2-W2', 
 #            'LJ-SR:W2-CM', 'LJ-SR:W2-CT', 'LJ-SR:W2-NA+', 'Coul-SR:SO4V9-SO4V9', 'LJ-SR:SO4V9-SO4V9', 'LJ-SR:SO4V9-CM', 
@@ -35,6 +39,7 @@ def get_data(prop, interaction_correction=True, in_kelvin=False):
     for file in files:
         data = PlotGromacs.get_gmx_stats(file)
         coverage.append(float(file.split(os.sep)[1].split('_')[-1])/Area)
+        print(coverage)
         if interaction_correction:
             if prop == 'Coul. recip.':
                 type_1, type_2 = 'NA+', 'SO4V9'
@@ -46,6 +51,8 @@ def get_data(prop, interaction_correction=True, in_kelvin=False):
             beads_2 = beads.get(type_2)
             correction = 1./(beads_1*beads_2)
             if in_kelvin:
+                # looks like avogadro * kb * 1000 so kJ/K/mol
+                # Goes from kJ/mol to Kelvin
                 correction /= 6.022*1380
         else:
             correction = 1.
@@ -56,16 +63,43 @@ def get_data(prop, interaction_correction=True, in_kelvin=False):
 
 
 
+
+
+
 # +
+p0 = [ 5.50000000e+05,  9.53126622e+05, -3.40000000e+00,  9.00000000e-03]
+llamas = [5.5e5, 0.532, -3.4, 0.009]
+
 fig, ax = create_fig(1,1)
 ax = ax[0]
-coverage, surftens, surftens_err = get_data('#Surf*SurfTen', interaction_correction=False)
-ax.errorbar(coverage, [prop_average/20. for prop_average in surftens], 
-            [prop_error/20. for prop_error in surftens_err], ls='', marker='o', color='k')
 
-ax.set_xlabel('$\Gamma\,/\,nm^-2$')
-ax.set_ylabel('Surface Tension / Nm')
+for p in [p0, llamas]:
+    frumkin_params = {
+        "omega_0": p[0],
+        "b": p[1],
+        "alpha_f": p[2],
+        "epsilon": p[3],
+        "zero_surf": 51.3,
+    }
+    Isotherm = FrumkinIsotherm(**frumkin_params)
+    gamma_max = Isotherm.get_gamma_zero_surftens()
+    dx = 0.001
+    gamma = np.linspace(0.001 * gamma_max, (1 - dx) * gamma_max, num=10000)
+
+
+    coverage, surftens, surftens_err = get_data('#Surf*SurfTen', interaction_correction=False)
+
+    ax.plot(gamma, Isotherm.tension(gamma), lw=2, ls='--', label='Frumkin Isotherm')  
+    break
+ax.errorbar(coverage, [prop_average/20. for prop_average in surftens], 
+            [prop_error/20. for prop_error in surftens_err], marker='o', color='k', label='This Work', ls='')
+#ax.plot(poly_cov(concentrations), poly_tens(concentrations), lw=2, ls='--', label='Two-State Model')
+
+ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+ax.set_ylabel('Surface Tension$\,/\,mN\,m^{-1}$')
+ax.legend()
 save_to_file(os.path.join('LLE', 'Surface_tension'))
+
 
 # +
 fig, ax = create_fig(1,1, )

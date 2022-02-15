@@ -36,6 +36,7 @@ files = [file for file in files if os.path.isfile(file)]
 
 files.sort(key=lambda x: int(x.split(os.sep)[1].split('_')[-1]))
 file=files[-1]
+files = files[:-3]
 print(files)
 # -
 
@@ -142,8 +143,8 @@ for typ in ['SO4', 'Tailgroups']:
             ax.plot(surface_coverage, np.average(maxima), color='k', ls='', marker='o')
            
         ax.legend([typ])
-        ax.set_xlabel('$\Gamma\,/\,nm^-2$')
-        ax.set_ylabel('Peak $\\rho_N\,/\,nm^-2$')    
+        ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+        ax.set_ylabel('Peak $\\rho_N\,/\,nm^{-3}$')    
     save_to_file('LLE/Peak_Heights_{:s}'.format(typ))
 
 # +
@@ -324,11 +325,40 @@ ax.errorbar(surface_coverages, water_d, water_e, marker='o', color='k', label='W
 ax.errorbar(surface_coverages, alkane_d, alkane_e, marker='d', color='k', label='Alkane - Water')
     
 ax.legend()
-ax.set_xlabel('$\Gamma\,/\,nm^-2$')
+ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
 ax.set_ylabel('Interface Thickness$\,/\,nm$')
 save_to_file('LLE/Interface_Thickness')
 # -
+fig, ax = create_fig(2,1, sharex=True)
+ax_upper = ax[0]
+ax_lower = ax[1]
+for typ in ['Tailgroups']:
+    for file in files:
+        surface_coverage = get_surfCov(file, A)
+        maxima = get_max(file, typ=typ, plot=False)
 
+            
+        if len(maxima) > 3:
+            ax_upper.plot(surface_coverage, np.average(maxima[1:3]), color='k', ls='-', marker='o')
+            ax_upper.plot(surface_coverage, np.average(maxima[::3]), color='k', ls='-', marker='o')
+            ax_upper.plot([surface_coverage]*2, [np.average(maxima[::3]), np.average(maxima[1:3])], color='k', ls='--')
+        elif len(maxima) > 2:
+            ax_upper.plot(surface_coverage, min(maxima), color='k', ls='-', marker='o')
+            ax_upper.plot(surface_coverage, (np.sum(maxima)-min(maxima))/2., color='k', ls='-', marker='o')
+            ax_upper.plot([surface_coverage]*2, [min(maxima), (np.sum(maxima)-min(maxima))/2.], color='k', ls='--')
+
+        else:
+            ax_upper.plot(surface_coverage, np.average(maxima), color='k', ls='-', marker='o')
+           
+    ax_lower.errorbar(surface_coverages, water_d, water_e, marker='o', color='k', label='Water', ls='')
+    ax_lower.set_ylabel('Interface \n Thickness$\,/\,nm$')
+    ax_lower.set_yticks(ax_lower.get_yticks(), minor=True)
+
+    ax_lower.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+    ax_upper.set_ylabel('Peak \n $\\rho_N\,/\,nm^{-3}$')    
+    
+    
+    save_to_file('LLE/Combined_peak_thickness')
 
 
 
