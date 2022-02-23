@@ -1,5 +1,6 @@
 from mkutils import PlotGromacs, save_to_file, create_fig
 import os, glob
+import numpy as np
 
 # +
 Area = 8*8
@@ -11,6 +12,8 @@ def get_beads(coverage):
 # -
 
 files = glob.glob('../VLE_*')
+files.sort(key=lambda x: int(x.split(os.sep)[1].split('_')[-1]))
+#files = files[:-3]
 files = [os.path.join(file, 'prod_vle', 'energies.out') for file in files]
 files = [file for file in files if os.path.isfile(file)]
 print([file.split(os.sep)[1].split('_')[-1] for file in files])
@@ -55,6 +58,46 @@ def get_data(prop, interaction_correction=True, in_kelvin=False):
     return coverage, prop_averages, prop_errors
 
 
+# +
+from scipy.interpolate import interp1d
+gamma = np.loadtxt('posser_fig1_gamma.csv', delimiter=',')
+surftens = np.loadtxt('posser_fig1_tens.csv', delimiter=',')
+
+f_gamma = interp1d(gamma[:, 0], gamma[:, 1], kind='cubic')
+f_surf = interp1d(surftens[:, 0], surftens[:,1], kind='cubic')
+f_gamma_t = lambda x: 6.022e5*f_gamma(x)
+
+c_min = max([surftens[0,0], gamma[0,0]])
+c_max = min([surftens[-1,0], gamma[-1,0]])
+concentrations = np.geomspace(c_min, c_max)
+concentrations = surftens[1:-1, 0]
+
+# +
+gamma = np.loadtxt('posser_fig1_gamma.csv', delimiter=',')
+surftens = np.loadtxt('posser_fig1_tens.csv', delimiter=',')
+
+f_gamma = np.polyfit(gamma[:, 0], gamma[:, 1], deg=2)
+f_gamma = np.poly1d(f_gamma)
+f_surf = np.polyfit(surftens[:, 0], surftens[:,1], deg=2)
+f_surf = np.poly1d(f_surf)
+f_gamma_t = lambda x: 6.022e5*f_gamma(x)
+
+c_min = min([surftens[0,0], gamma[0,0]])
+c_max = max([surftens[-1,0], gamma[-1,0]])
+concentrations = np.geomspace(c_min, c_max)
+concentrations = surftens[:, 0]
+
+# +
+fig, ax = create_fig(2, 1, sharex=True)
+ax1 = ax[-1]
+ax = ax[0]
+
+
+ax.plot(surftens[:, 0], surftens[:, 1], marker='o', ls='', color='k', fillstyle='none', markersize=8)
+ax.plot(concentrations, f_surf(concentrations), lw=2)
+ax1.plot(gamma[:, 0], gamma[:, 1], marker='o', ls='', color='k', fillstyle='none', markersize=8)
+ax1.plot(concentrations, f_gamma(concentrations), lw=2)
+
 
 # +
 fig, ax = create_fig(1,1)
@@ -63,8 +106,9 @@ coverage, surftens, surftens_err = get_data('#Surf*SurfTen', interaction_correct
 ax.errorbar(coverage, [prop_average/20. for prop_average in surftens], 
             [prop_error/20. for prop_error in surftens_err], ls='', marker='o', color='k')
 
-ax.set_xlabel('$\Gamma\,/\,nm^-2$')
-ax.set_ylabel('Surface Tension / Nm')
+ax.plot(f_gamma_t(concentrations), f_surf(concentrations), marker='', ls='--', lw=2)
+ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+ax.set_ylabel('Surface Tension$\,/\,mN\,m^{-1}$')
 save_to_file(os.path.join('VLE', 'Surface_tension'))
 
 # +

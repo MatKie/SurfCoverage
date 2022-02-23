@@ -37,7 +37,8 @@ files = [file for file in files if os.path.isfile(file)]
 
 files.sort(key=lambda x: int(x.split(os.sep)[1].split('_')[-1]))
 file=files[-1]
-print(files)
+#files = files[:-3]
+
 # -
 
 for file in files:
@@ -57,7 +58,7 @@ for file in files:
     ax.set_xlabel('z / nm')
     ax.set_ylabel('$\\rho_N\ /\ 1\,/\,nm^3$')
     ax.legend()
-    ax.text(-15, 12.5, '$\Gamma\,=\,{:.2f}\,nm^-2$'.format(surface_coverage),fontdict={'fontsize': 20})
+    ax.text(-15, 12.5, '$\Gamma\,=\,{:.2f}\,nm^{{-2}}$'.format(surface_coverage),fontdict={'fontsize': 20})
     
     save_to_file(os.path.join('VLE', 'profiles', '{:s}_nr_dens'.format(file.split(os.sep)[1])))
     '''
@@ -121,31 +122,41 @@ def get_max(file, typ='SO4', plot=False):
 #maxima = get_max('../VLE_330/prod_nvt/density.xvg', typ='SO4', plot=True)
 
 
+fig, ax = create_fig(1,1)
+ax = ax[0]
+types = ['SO4', 'Tailgroups']
+markers = ['o', 'D']
+for typ, marker in zip(types, markers):
 
-for typ in ['SO4', 'Tailgroups']:
-    fig, ax = create_fig(1,1)
-    ax = ax[0]
     for file in files:
         surface_coverage = get_surfCov(file, A)
         maxima = get_max(file, typ=typ, plot=False)
 
             
         if len(maxima) > 3:
-            ax.plot(surface_coverage, np.average(maxima[1:3]), color='k', ls='', marker='o')
-            ax.plot(surface_coverage, np.average(maxima[::3]), color='k', ls='', marker='o')
+            ax.plot(surface_coverage, np.average(maxima[1:3]), color='k', ls='', marker=marker)
+            ax.plot(surface_coverage, np.average(maxima[::3]), color='k', ls='', marker=marker)
             ax.plot([surface_coverage]*2, [np.average(maxima[::3]), np.average(maxima[1:3])], color='k', ls='--')
         elif len(maxima) > 2:
-            ax.plot(surface_coverage, min(maxima), color='k', ls='', marker='o')
-            ax.plot(surface_coverage, (np.sum(maxima)-min(maxima))/2., color='k', ls='', marker='o')
+            ax.plot(surface_coverage, min(maxima), color='k', ls='', marker=marker)
+            ax.plot(surface_coverage, (np.sum(maxima)-min(maxima))/2., color='k', ls='', marker=marker)
             ax.plot([surface_coverage]*2, [min(maxima), (np.sum(maxima)-min(maxima))/2.], color='k', ls='--')
 
         else:
-            ax.plot(surface_coverage, np.average(maxima), color='k', ls='', marker='o')
+            ax.plot(surface_coverage, np.average(maxima), color='k', ls='', marker=marker)
            
-        ax.legend([typ])
-        ax.set_xlabel('$\Gamma\,/\,nm^-2$')
-        ax.set_ylabel('Peak $\\rho_N\,/\,nm^-2$')    
-    save_to_file('VLE/Peak_Heights_{:s}'.format(typ))
+xlims = ax.get_xlim()
+ylims = ax.get_ylim()
+for label, marker in zip(['Headgroups', 'Tailgroups'], markers):
+    ax.plot(-1, -1, color='k', marker=marker, label=label, ls='')
+ax.set_xlim(xlims)
+ax.set_ylim(ylims)
+ax.legend()
+
+
+ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+ax.set_ylabel('Peak $\\rho_N\,/\,nm^{-3}$')    
+save_to_file('VLE/Peak_Heights_combined'.format(typ))
 
 # +
 # Gaussian fits to CM_CT density and minimum value
@@ -288,7 +299,7 @@ def fit_water_density(file, box_size=40, side='lhs', plot=False):
     d = p[1]
     return upper_limit, d, perr[1]
  
-file = '../VLE_180/prod_vle/density.xvg'
+file = '../VLE_390/prod_vle/density.xvg'
 #get_water_density(file, box_size=box_size, plot=True)
 fit_water_density(file, plot=True, box_size=box_size)
 fit_water_density(file, plot=True, box_size=box_size, side='rhs')
@@ -324,11 +335,80 @@ ax.errorbar(surface_coverages, water_d, water_e, marker='o', color='k', label='W
 ax.errorbar(surface_coverages, alkane_d, alkane_e, marker='d', color='k', label='Alkane - Water')
     
 ax.legend()
-ax.set_xlabel('$\Gamma\,/\,nm^-2$')
+ax.set_xlabel('$\Gamma\,/\,nm^{-2}$')
 ax.set_ylabel('Interface Thickness$\,/\,nm$')
 save_to_file('VLE/Interface_Thickness')
+# +
+# Combined plot
+
+fig, ax = create_fig(2,1, sharex=True)
+ax1 = ax[1]
+ax = ax[0]
+
+types = ['SO4', 'Tailgroups']
+markers = ['o', 'D']
+for typ, marker in zip(types, markers):
+
+    for file in files:
+        surface_coverage = get_surfCov(file, A)
+        maxima = get_max(file, typ=typ, plot=False)
+
+            
+        if len(maxima) > 3:
+            ax.plot(surface_coverage, np.average(maxima[1:3]), color='k', ls='', marker=marker)
+            ax.plot(surface_coverage, np.average(maxima[::3]), color='k', ls='', marker=marker)
+            ax.plot([surface_coverage]*2, [np.average(maxima[::3]), np.average(maxima[1:3])], color='k', ls='--')
+        elif len(maxima) > 2:
+            ax.plot(surface_coverage, min(maxima), color='k', ls='', marker=marker)
+            ax.plot(surface_coverage, (np.sum(maxima)-min(maxima))/2., color='k', ls='', marker=marker)
+            ax.plot([surface_coverage]*2, [min(maxima), (np.sum(maxima)-min(maxima))/2.], color='k', ls='--')
+
+        else:
+            ax.plot(surface_coverage, np.average(maxima), color='k', ls='', marker=marker)
+           
+xlims = ax.get_xlim()
+ylims = ax.get_ylim()
+for label, marker in zip(['Headgroups', 'Tailgroups'], markers):
+    ax.plot(-1, -1, color='k', marker=marker, label=label, ls='')
+ax.set_xlim(xlims)
+ax.set_ylim(ylims)
+#ax.legend()
+ax.set_ylabel('Peak\n $\\rho_N\,/\,nm^{-3}$')    
+
+surface_coverages, water_d, alkane_d, water_e, alkane_e = [], [], [], [], []
+for file in files:
+    gro_path = os.path.join(*file.split(os.sep)[:-1], 'confout.gro')      
+    x, y, z = get_boxsize(gro_path)
+    A = x*y
+    box_size = z
+    
+    surface_coverage = get_surfCov(file, A)
+    surface_coverages.append(surface_coverage)
+    try:
+        water_left_x, water_left_d, water_left_err = fit_water_density(file, plot=False, box_size=box_size)
+        water_right_x, water_right_d, water_right_err = fit_water_density(file, plot=False, side='rhs', box_size=box_size)
+        (alkane_left_x, alkane_right_x), (alkane_left_err, alkane_right_err) = get_lower_point(file, plot=False, box_size=box_size)
+
+        left_d = water_left_x - alkane_left_x
+        right_d = alkane_right_x - water_right_x
+
+        water_d.append(water_left_d/2. + water_right_d/2.)
+        water_e.append(water_left_err/2. + water_right_err/2.)
+        alkane_d.append(left_d/2. + right_d/2.)
+        alkane_e.append(alkane_left_err/4. + alkane_right_err/4. + water_e[-1]/2.)
+    except RuntimeError:
+        del surface_coverages[-1]
+    
+ax1.errorbar(surface_coverages, water_d, water_e, marker='o', color='k', label='Water')
+    
+#ax1.legend()
+ax1.set_xlabel('$\Gamma\,/\,nm^{-2}$')
+ax1.set_ylabel('Interface\n Thickness$\,/\,nm$')
+
+
+save_to_file('VLE/Combined_Peak_Heights_Thickness')
+
 # -
-import ase
 
 
 
